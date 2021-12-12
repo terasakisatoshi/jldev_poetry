@@ -13,8 +13,8 @@ build:
 	docker cp ${DOCKER_IMAGE}-tmp:/workspace/jldev_poetry/.venv.zip .venv.zip
 	unzip -q .venv.zip && rm .venv.zip
 	docker stop ${DOCKER_IMAGE}-tmp && docker rm ${DOCKER_IMAGE}-tmp
-	docker-compose run --rm julia julia --project=@. -e 'using Pkg; Pkg.instantiate()'
-	docker-compose run --rm julia julia --project=docs -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+	docker-compose run --rm shell julia --project=@. -e 'using Pkg; Pkg.instantiate()'
+	docker-compose run --rm shell julia --project=docs -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
 
 # Excecute in docker container
 web: docs
@@ -26,11 +26,11 @@ web: docs
 test: jltest mypy pytest
 
 jltest:
-	docker-compose run --rm julia julia -e 'using Pkg; Pkg.activate("."); Pkg.test()'
+	docker-compose run --rm shell julia -e 'using Pkg; Pkg.activate("."); Pkg.test()'
 mypy:
-	docker-compose run --rm julia poe mypy
+	docker-compose run --rm shell poe mypy
 pytest:
-	docker-compose run --rm julia poe test
+	docker-compose run --rm shell poe test
 
 clean:
 	docker-compose down

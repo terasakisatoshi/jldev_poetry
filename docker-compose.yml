@@ -9,13 +9,13 @@ services:
     ports:
       - "8888:8888"
     command: poetry run jupyter lab --notebook-dir /workspace/jldev_poetry.jl --ip=0.0.0.0 --allow-root
-  julia:
+  shell:
     image: jldev_poetryjl
-    container_name: jldev_poetryjl-julia
+    container_name: jldev_poetryjl-shell
     volumes:
       - ./:/workspace/jldev_poetry.jl
     working_dir: /workspace/jldev_poetry.jl
-    command: poetry run julia --project=/workspace/jldev_poetry.jl
+    command: /bin/bash
   web:
     image: jldev_poetryjl
     container_name: jldev_poetryjl-packagedocs
