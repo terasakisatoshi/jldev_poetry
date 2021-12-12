@@ -1,0 +1,36 @@
+version: '3'
+services:
+  lab:
+    image: jldev_poetryjl
+    container_name: jldev_poetryjl-lab
+    volumes:
+      - ./:/workspace/jldev_poetry.jl
+    working_dir: /workspace/jldev_poetry.jl
+    ports:
+      - "8888:8888"
+    command: poetry run jupyter lab --notebook-dir /workspace/jldev_poetry.jl --ip=0.0.0.0 --allow-root
+  julia:
+    image: jldev_poetryjl
+    container_name: jldev_poetryjl-julia
+    volumes:
+      - ./:/workspace/jldev_poetry.jl
+    working_dir: /workspace/jldev_poetry.jl
+    command: poetry run julia --project=/workspace/jldev_poetry.jl
+  web:
+    image: jldev_poetryjl
+    container_name: jldev_poetryjl-packagedocs
+    volumes:
+      - ./:/workspace/jldev_poetry.jl
+    working_dir: /workspace/jldev_poetry.jl
+    ports:
+      - "8000:8000"
+    command: poetry run make web
+  pluto:
+    image: jldev_poetryjl
+    container_name: jldev_poetryjl-pluto
+    volumes:
+      - ./:/workspace/jldev_poetry.jl
+    working_dir: /workspace/jldev_poetry.jl
+    ports:
+      - "1234:1234"
+    command: poetry run julia -e 'import Pluto; Pluto.run(host="0.0.0.0", port=1234)'
