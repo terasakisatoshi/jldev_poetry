@@ -4,7 +4,7 @@ packages = [
     { include = "pytools", from = "src"},
 ]
 version = "0.1.0"
-description = "Enhance your JOps = (Julia + Python/Poetry + VSCode + Jupyter Lab + Pluto)"
+description = "Enhance your JOps (= Julia + Python/Poetry + VSCode + JupyterLab + Docker + Pluto)"
 authors = ["SatoshiTerasaki <terasakisatoshi.math@gmail.com>"]
 
 [tool.poetry.dependencies]
