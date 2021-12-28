@@ -1,0 +1,30 @@
+/*
+Reference: https://qiita.com/homoluctus/items/dca21cf6b2eff858672b
+*/
+{
+    "[python]": {
+        "editor.tabSize": 4,
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": false,
+        "editor.formatOnType": false,
+        "editor.insertSpaces": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+    },
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "python.formatting.blackPath": "${workspaceFolder}/.venv/bin/black",
+    "python.sortImports.path": "${workspaceFolder}/.venv/bin/isort",
+    "python.envFile": "${workspaceFolder}/.env",
+    // formatter
+    "python.formatting.provider": "black",
+    // type checker mypy
+    "python.linting.enabled": true,
+    "python.linting.mypyEnabled": true,
+    // test suite
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestArgs": [
+        "test"
+    ],
+}
