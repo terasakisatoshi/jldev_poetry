@@ -35,7 +35,7 @@ jupyterlab-topbar-text = "^0.6.2"
 jupyterlab-system-monitor = "^0.8.0"
 jupyter-server-proxy = "^3.2.0"
 tokenize-rt = "^4.2.1"
-ipython = "^7.30.1"
+ipython = "^8.10.0"
 
 [tool.poe.tasks]
 test = "pytest"
