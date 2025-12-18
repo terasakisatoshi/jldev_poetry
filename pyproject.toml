@@ -26,7 +26,7 @@ jupyter-pluto-proxy = {git = "https://github.com/IllumiDesk/jupyter-pluto-proxy.
 jupyterlab-code-formatter = "^1.4.10"
 jupytext = "^1.13.3"
 mypy = "^0.910"
-nbconvert = "^6.3.0"
+nbconvert = "^7.16.6"
 poethepoet = "^0.11.0"
 pytest = "^6.1"
 webio-jupyter-extension = "^0.1.0"
