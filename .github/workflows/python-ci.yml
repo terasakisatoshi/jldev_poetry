@@ -1,0 +1,59 @@
+name: Python CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      POETRY_VIRTUALENVS_IN_PROJECT: "true"
+      PYTHONPATH: src
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pipx install poetry==1.8.3
+      - name: Install locked dependencies
+        run: |
+          poetry check --lock
+          poetry env use python
+          poetry install --no-root --no-interaction
+          poetry run python -m pip check
+      - name: Tests and development tooling
+        run: |
+          poetry run pytest -q
+          poetry run black --check src test
+          poetry run mypy src
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.10'
+      - name: Install Julia notebook kernel
+        run: |
+          export JUPYTER="$(poetry env info --path)/bin/jupyter"
+          julia -e 'using Pkg; Pkg.add("IJulia"); using IJulia; IJulia.installkernel("Julia", "--project=@v1.10")'
+      - name: Real kernels, notebook export and Lab startup
+        run: poetry run python ci/notebook_smoke.py
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build development image
+        run: docker build -t jldev-security-ci .
+      - name: Execute notebook kernels in image
+        run: docker run --rm -v "$PWD/ci:/tmp/ci:ro" jldev-security-ci poetry run python /tmp/ci/notebook_smoke.py
+      - name: Julia Python bridge smoke
+        run: |
+          docker run --rm -e MPLBACKEND=Agg jldev-security-ci poetry run julia --project=/workspace/jldev_poetry -e 'using Pandas, PyPlot, SymPy; @assert !isempty(string(Pandas.DataFrame(Dict("x" => [1, 2])))); PyPlot.plot([1, 2]); out = tempname() * ".png"; PyPlot.savefig(out); @assert filesize(out) > 0; rm(out)'
+      - name: Validate Compose paths and configuration
+        run: docker compose config --quiet
