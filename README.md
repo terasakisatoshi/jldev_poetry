@@ -85,3 +85,11 @@ Then dive into Remote Container.
 ```console
 $ make clean
 ```
+
+## Supported runtime and security migration
+
+Julia 1.10 and the latest stable Julia 1.x release are tested. Python 3.11 is the supported notebook interpreter, with Pillow 13, JupyterLab 4 and Notebook 7. The Docker image tracks the Julia 1.10 Bookworm line; Compose mounts the same `/workspace/jldev_poetry` path used by the image.
+
+Legacy Lab 3 topbar/system-monitor, WebIO frontend, Sublime keybindings and Monokai++ theme are removed. Lab 4 uses its default theme; compatible topbar text, code formatter, widgets, Jupytext and Pluto proxy remain. WebIO-specific interactive displays need a future compatible replacement. Python and Julia notebook kernels remain available.
+
+CI tests notebook execution/export, scientific plotting, authenticated Lab startup and the full Docker image. These are smoke checks, not exhaustive browser-extension or scientific equivalence tests.
