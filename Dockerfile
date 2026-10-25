@@ -1,4 +1,4 @@
-FROM julia:1.7.2
+FROM julia:1.10-bookworm
 
 # create user with a home directory
 ARG NB_USER=jovyan
@@ -38,40 +38,19 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     && \
     apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* # clean up
 
-# Install NodeJS to build extensions of JupyterLab
-RUN apt-get update && \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt-get install -y nodejs && \
-    apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* # clean up
-
 ENV PATH=${HOME}/.local/bin:${PATH}
-RUN curl -sSL https://install.python-poetry.org | python3 -
+RUN python3 -c 'import sys; assert sys.version_info[:2] == (3, 11)' && \
+    curl -fsSL https://install.python-poetry.org -o /tmp/install-poetry.py && \
+    python3 /tmp/install-poetry.py --version 1.8.3 && rm /tmp/install-poetry.py
 
 WORKDIR /workspace/jldev_poetry
 COPY pyproject.toml poetry.toml poetry.lock /workspace/jldev_poetry/
 RUN poetry install --no-root && echo Done
-RUN pip3 install poethepoet
 
 SHELL ["poetry", "run", "/bin/bash", "-c"]
 
-# Install/enable extension for JupyterLab users
-RUN jupyter labextension install @z-m-k/jupyterlab_sublime --no-build && \
-    #jupyter labextension install @ryantam626/jupyterlab_code_formatter --no-build && \
-    #jupyter serverextension enable --py jupyterlab_code_formatter && \
-    jupyter labextension install @hokyjack/jupyterlab-monokai-plus --no-build && \
-    jupyter lab build -y && \
-    jupyter lab clean -y && \
-    npm cache clean --force && \
-    rm -rf ~/.cache/yarn && \
-    rm -rf ~/.node-gyp && \
-    echo Done
-
+# Lab 4 uses prebuilt compatible extensions; legacy source extensions are removed.
 RUN mkdir -p ${HOME}/.local ${HOME}/.jupyter
-# Set color theme Monokai++ by default
-RUN mkdir -p ${HOME}/.jupyter/lab/user-settings/@jupyterlab/apputils-extension && \
-    echo '{"theme": "Monokai++"}' >> \
-    ${HOME}/.jupyter/lab/user-settings/@jupyterlab/apputils-extension/themes.jupyterlab-settings
-
 RUN mkdir -p ${HOME}/.jupyter/lab/user-settings/@jupyterlab/notebook-extension && \
     echo '{"codeCellConfig": {"lineNumbers": true}}' \
     >> ${HOME}/.jupyter/lab/user-settings/@jupyterlab/notebook-extension/tracker.jupyterlab-settings
@@ -94,7 +73,7 @@ WORKDIR /workspace/jldev_poetry
 
 COPY ./playground/notebook /workspace/jldev_poetry
 COPY ./playground/pluto /workspace/jldev_poetry
-COPY ./docs/Project.toml /workspace/jldev_poetry/docs
+COPY ./docs/Project.toml /workspace/jldev_poetry/docs/Project.toml
 COPY ./src /workspace/jldev_poetry/src
 COPY ./Project.toml /workspace/jldev_poetry
 
